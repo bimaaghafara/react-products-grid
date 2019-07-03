@@ -1,0 +1,49 @@
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  .loader-wheel {
+    animation: spin 1s infinite linear;
+    border: 2px solid rgba(30, 30, 30, 0.5);
+    border-left: 4px solid #eee;
+    border-radius: 50%;
+    height: 80px;
+    margin-bottom: 15px;
+    width: 80px;
+  }
+  .loader-text {
+    font-size: 20px;
+    color: #000;
+    font-family: arial, sans-serif;
+    &::after {
+      content: 'Loading';
+      animation: load 2s linear infinite;
+    }
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes load {
+    0% {
+      content: 'Loading';
+    }
+    33% {
+      content: 'Loading.';
+    }
+    67% {
+      content: 'Loading..';
+    }
+    100% {
+      content: 'Loading...';
+    }
+  }
+}
