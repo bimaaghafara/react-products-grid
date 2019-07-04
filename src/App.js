@@ -1,6 +1,9 @@
 import React, {Component, Fragment} from 'react';
 import './App.scss';
+
+// components
 import Loader from './components/loader';
+import Product from './components/product';
 
 class App extends Component {
 
@@ -43,9 +46,11 @@ class App extends Component {
           <hr></hr>
         </div>
 
-        <div className="products-wrapper">
-          {state.products.map(product => 
-            <div key={product.id} className="well-sm"> {product.face} </div>
+        <div className="container products-wrapper">
+          {state.products.map(product =>
+            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm" key={product.id}>
+              <Product face={product.face} size={product.size} price={product.price} date={product.date}></Product>
+            </div>
           )}
         </div>
       </Fragment>
