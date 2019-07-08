@@ -4,6 +4,7 @@ import './App.scss';
 // components
 import Loader from './components/loader';
 import Product from './components/product';
+import Ads from './components/ads';
 
 class App extends Component {
 
@@ -11,7 +12,7 @@ class App extends Component {
     super(props);
     this.state = {
         showLoading: false,
-        limit: 200,
+        limit: 125,
         page: 1,
         products: [],
         sortBy: '',
@@ -68,6 +69,12 @@ class App extends Component {
     }
   }
 
+  getRandomInt() {
+    const min = 1;
+    const max = 1234567890123456;
+    return Math.floor(Math.random()*(max-min)) + min;
+  }
+
   render() {
     const state = this.state;
 
@@ -100,14 +107,26 @@ class App extends Component {
 
         <div className="container products-wrapper">
           {state.products.map((product, index) =>
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm" key={product.id}>
-              <h3>{index}</h3>
-              <Product face={product.face} size={product.size} price={product.price} date={product.date}></Product>
-            </div>
+            <Fragment key={product.id}>
+              <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
+                <h3>{index}</h3>
+                <Product id={product.id} face={product.face} size={product.size} price={product.price} date={product.date}></Product>
+              </div>
+              {(index+1)%20 === 0 && 
+                <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
+                  <h3>Ads</h3>
+                  <Ads rParam={this.getRandomInt()}></Ads>
+                </div>
+              }
+            </Fragment>
           )}
         </div>
 
-        {this.state.isEndOfCatalogue && <div className="well-lg text-center">End of Catalogue!</div>}
+        {this.state.isEndOfCatalogue &&
+          <div className="well-lg text-center">
+            <h2>End of Catalogue!</h2>
+          </div>
+        }
       </Fragment>
     );
   }

@@ -7,6 +7,7 @@ export default function Product(props) {
                 <div className="face">{props.face}</div>
             </div>
             <div className="description">
+                #{props.id}
                 <div className="price text-right">
                     ${(props.price/100).toFixed(2)}
                 </div>
