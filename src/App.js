@@ -15,8 +15,10 @@ class App extends Component {
         limit: 125,
         page: 1,
         products: [],
+        nextProducts: [],
         sortBy: '',
-        isEndOfCatalogue: false
+        isEndOfCatalogue: false,
+        isFetchingNextProducts: false
     };
       
     this.handleSortByChange = this.handleSortByChange.bind(this);
@@ -59,13 +61,40 @@ class App extends Component {
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
         })
-      })
+      });
   }
 
-  handleScroll() {
+  fetchNextProducts() {
+    this.setState({isFetchingNextProducts: true});
+    let limitParam = `_limit=${this.state.limit}`;
+    let pageParam = `&_page=${this.state.page}`;
+    let sortParam = this.state.sortBy? `&_sort=${this.state.sortBy}` : '';
+    let url = 'http://localhost:3000/products?' + limitParam + pageParam + sortParam;
+    fetch(url)
+      .then(response => response.json())
+      .then(products => {
+        this.setState({
+          isFetchingNextProducts: false,
+          nextProducts: products,
+          page: products.length>0? this.state.page+1: this.state.page,
+          isEndOfCatalogue: products.length>0? false: true
+        });
+      });
+  }
+
+  async handleScroll() {
     const isNearBottom = window.innerHeight + window.scrollY >= (document.body.offsetHeight) - 20;
-    if (isNearBottom && !this.state.showLoading && !this.state.isEndOfCatalogue) {
-      this.fetchProducts();
+    if (isNearBottom && this.state.nextProducts.length>0) {
+      await this.setState({
+        products: [...this.state.products, ...this.state.nextProducts],
+      });
+      await this.setState({
+        nextProducts : []
+      });
+    }
+
+    if (!this.state.isFetchingNextProducts && this.state.nextProducts.length===0 && !this.state.isEndOfCatalogue) {
+      this.fetchNextProducts();
     }
   }
 
