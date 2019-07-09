@@ -77,6 +77,7 @@ class App extends Component {
       });
   }
 
+  // function to pre-emptively fetch nextProducts
   fetchNextProducts() {
     this.setState({isFetchingNextProducts: true});
     fetch(this.getProductsUrl())

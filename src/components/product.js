@@ -19,6 +19,9 @@ export default function Product(props) {
     );
 }
 
+// formating dates
+// Dates should be displayed in relative time (eg. "3 days ago") when dates no more than 1 week ago
+// Dates should be displayed in full date when they are older than 1 week
 function getAddedTimeLabel(addedTime) {
     // in milisecond :
     const oneSecond = 1000;
@@ -37,7 +40,7 @@ function getAddedTimeLabel(addedTime) {
     } else if (diffTime < oneDay) {
         const timeAgo = Math.floor(diffTime/oneHour);
         return `${timeAgo} ${timeAgo>1? 'hours': 'hour'} ago`;
-    } else if (diffTime < oneWeek) {
+    } else if (diffTime <= oneWeek) {
         const timeAgo = Math.floor(diffTime/oneDay);
         return `${timeAgo} ${timeAgo>1? 'days': 'day'} ago`;
     } else {
