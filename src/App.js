@@ -18,7 +18,8 @@ class App extends Component {
         nextProducts: [],
         sortBy: '',
         isEndOfCatalogue: false,
-        isFetchingNextProducts: false
+        isFetchingNextProducts: false,
+        adsIds: []
     };
       
     this.handleSortByChange = this.handleSortByChange.bind(this);
@@ -55,12 +56,14 @@ class App extends Component {
     fetch(url)
       .then(response => response.json())
       .then(products => {
+        const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
         this.setState({
+          adsIds: adsIds,
           products: [...this.state.products, ...products],
           showLoading: false,
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
-        })
+        });
       });
   }
 
@@ -73,8 +76,10 @@ class App extends Component {
     fetch(url)
       .then(response => response.json())
       .then(products => {
+        const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
         this.setState({
           isFetchingNextProducts: false,
+          adsIds: adsIds,
           nextProducts: products,
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
@@ -98,6 +103,14 @@ class App extends Component {
     }
   }
 
+  getRandomAdsIds(newLength) {
+    let ret = this.state.adsIds;
+    for(let i=this.state.adsIds.length; i<newLength; i++) {
+      ret.push(this.getRandomInt())
+    }
+    return ret;
+  }
+
   getRandomInt() {
     const min = 1;
     const max = 1234567890123456;
@@ -105,8 +118,6 @@ class App extends Component {
   }
 
   render() {
-    const state = this.state;
-
     return (
       <Fragment>
         {this.state.showLoading && <Loader></Loader>}
@@ -124,7 +135,7 @@ class App extends Component {
               Sort by:
             </div>
             <div className="sort-by-select">
-              <select className="form-control" value={state.sortBy} onChange={this.handleSortByChange}>
+              <select className="form-control" value={this.state.sortBy} onChange={this.handleSortByChange}>
                 <option value="">Default</option>
                 <option value="size">Size</option>
                 <option value="price">Price</option>
@@ -135,7 +146,7 @@ class App extends Component {
         </div>
 
         <div className="container products-wrapper">
-          {state.products.map((product, index) =>
+          {this.state.products.map((product, index) =>
             <Fragment key={product.id}>
               <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
                 <h3>{index}</h3>
@@ -143,8 +154,8 @@ class App extends Component {
               </div>
               {(index+1)%20 === 0 && 
                 <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
-                  <h3>Ads</h3>
-                  <Ads rParam={this.getRandomInt()}></Ads>
+                  <h3>Ads {((index+1)/20)-1}</h3>
+                  <Ads rParam={this.state.adsIds[((index+1)/20)-1]}></Ads>
                 </div>
               }
             </Fragment>
