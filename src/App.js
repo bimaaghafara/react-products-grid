@@ -73,6 +73,10 @@ class App extends Component {
           showLoading: false,
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
+        }, () => {
+          // scroll down & up window by 10px, to trigger handleScroll()
+          window.scrollBy(0, 10);
+          window.scrollBy(0, -10);
         });
       });
   }
@@ -93,8 +97,9 @@ class App extends Component {
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
         }, () => {
-          // scroll up window by 1px, to trigger handleScroll()
-          window.scrollBy(0, -1)
+          // scroll down & up window by 10px, to trigger handleScroll()
+          window.scrollBy(0, 10);
+          window.scrollBy(0, -10);
         });
       });
   }
@@ -120,8 +125,8 @@ class App extends Component {
       }
     }
 
-    // fetchNextProducts when isFetchingNextProducts=false, nextProducts=[], and isEndOfCatalogue=false;
-    if (!this.state.isFetchingNextProducts && this.state.nextProducts.length===0 && !this.state.isEndOfCatalogue) {
+    // fetchNextProducts when showLoading=false, isFetchingNextProducts=false, nextProducts=[], and isEndOfCatalogue=false;
+    if (!this.state.showLoading && !this.state.isFetchingNextProducts && this.state.nextProducts.length===0 && !this.state.isEndOfCatalogue) {
       this.fetchNextProducts();
     }
   }
