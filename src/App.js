@@ -167,7 +167,7 @@ class App extends Component {
 
         {this.state.isEndOfCatalogue &&
           <div className="well-lg text-center">
-            <h2>End of Catalogue!</h2>
+            <h2>~ end of catalogue ~</h2>
           </div>
         }
       </Fragment>

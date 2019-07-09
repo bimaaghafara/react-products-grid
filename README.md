@@ -6,7 +6,8 @@ This is an ecommerce site, where you can buy all sorts of ascii faces like `(ノ
 
 How to run the App
 ---
-npm run start
+- "npm run start"
+- or you can run these commands in separate window: "npm run json-server" and "npm run react-start"
 
 Features
 ----
@@ -23,5 +24,3 @@ Features
 8. Ads features :
   - after every 20 products we need to insert an advertisement from one of our sponsors. Use the same markup as the advertisement in the header shown in `public/index/html`, but make sure the `?r` query param is randomly generated each time an ad is displayed.
   - Ads should be randomly selected, but a user must never see the same ad twice in a row.
-
-### What libraries/frameworks/packages

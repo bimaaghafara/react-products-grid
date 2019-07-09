@@ -14,7 +14,9 @@
   },
   "main": "server/index.js",
   "scripts": {
-    "start": "concurrently --kill-others \"set PORT=3333 && react-scripts start\" \"json-server server/index.js --routes server/routes.json --middlewares server/handle-delay.js server/handle-ads.js\"",
+    "start": "concurrently --kill-others \"npm run react-start\" \"npm run json-server\"",
+    "react-start": "set PORT=3333 && react-scripts start",
+    "json-server": "json-server server/index.js --routes server/routes.json --middlewares server/handle-delay.js server/handle-ads.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
