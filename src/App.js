@@ -40,24 +40,27 @@ class App extends Component {
     this.setState({
       sortBy: value,
       page: 1,
-      isEndOfCatalogue: false,
-      products: []
+      isEndOfCatalogue: false
     }, () => {
       this.fetchProducts()
     });
   }
 
-  fetchProducts() {
-    this.setState({showLoading: true});
+  getProductsUrl() {
     let limitParam = `_limit=${this.state.limit}`;
     let pageParam = `&_page=${this.state.page}`;
     let sortParam = this.state.sortBy? `&_sort=${this.state.sortBy}` : '';
-    let url = 'http://localhost:3000/products?' + limitParam + pageParam + sortParam;
-    fetch(url)
+    return 'http://localhost:3000/products?' + limitParam + pageParam + sortParam;
+  }
+
+  fetchProducts() {
+    this.setState({showLoading: true});
+    fetch(this.getProductsUrl())
       .then(response => response.json())
-      .then(products => {
+      .then(async products => {
         const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
-        this.setState({
+        await this.setState({products: []});
+        await this.setState({
           adsIds: adsIds,
           products: [...this.state.products, ...products],
           showLoading: false,
@@ -69,11 +72,7 @@ class App extends Component {
 
   fetchNextProducts() {
     this.setState({isFetchingNextProducts: true});
-    let limitParam = `_limit=${this.state.limit}`;
-    let pageParam = `&_page=${this.state.page}`;
-    let sortParam = this.state.sortBy? `&_sort=${this.state.sortBy}` : '';
-    let url = 'http://localhost:3000/products?' + limitParam + pageParam + sortParam;
-    fetch(url)
+    fetch(this.getProductsUrl())
       .then(response => response.json())
       .then(products => {
         const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
@@ -151,12 +150,14 @@ class App extends Component {
           {this.state.products.map((product, index) =>
             <Fragment key={product.id}>
               <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
-                <h3>{index}</h3>
+                {/* for debugging only, to show index of Products array  */}
+                {/* <h3>{index}</h3> */}
                 <Product id={product.id} face={product.face} size={product.size} price={product.price} date={product.date}></Product>
               </div>
               {(index+1)%20 === 0 && 
                 <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
-                  <h3>Ads {((index+1)/20)-1}</h3>
+                  {/* for debugging only, to show index of Ads array  */}
+                  {/* <h3>Ads {((index+1)/20)-1}</h3> */}
                   <Ads rParam={this.state.adsIds[((index+1)/20)-1]}></Ads>
                 </div>
               }
