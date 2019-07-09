@@ -63,7 +63,10 @@ class App extends Component {
       .then(response => response.json())
       .then(async products => {
         const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
-        await this.setState({products: []});
+        await this.setState({
+          nextProducts: [],
+          products: []
+        });
         await this.setState({
           adsIds: adsIds,
           products: [...this.state.products, ...products],
@@ -110,6 +113,7 @@ class App extends Component {
         });
       } else if (!this.state.isEndOfCatalogue) {
         // when user isNearBottom but app isFetchingNextProducts, app will show loader
+        // try to scroll down so fast into isNearBottom
         // loader will be hidden when fetch products is done
         this.setState({showLoading: true});
       }
