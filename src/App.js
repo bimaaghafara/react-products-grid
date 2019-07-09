@@ -78,24 +78,29 @@ class App extends Component {
       .then(products => {
         const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
         this.setState({
+          showLoading: false,
           isFetchingNextProducts: false,
           adsIds: adsIds,
           nextProducts: products,
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
-        });
+        }, () => {window.scrollBy(0, -1)});
       });
   }
 
   async handleScroll() {
-    const isNearBottom = window.innerHeight + window.scrollY >= (document.body.offsetHeight) - 20;
-    if (isNearBottom && this.state.nextProducts.length>0) {
-      await this.setState({
-        products: [...this.state.products, ...this.state.nextProducts],
-      });
-      await this.setState({
-        nextProducts : []
-      });
+    const isNearBottom = window.innerHeight + window.scrollY >= (document.body.offsetHeight) - 375;
+    if (isNearBottom) {
+      if (this.state.nextProducts.length>0) {
+        await this.setState({
+          products: [...this.state.products, ...this.state.nextProducts],
+        });
+        await this.setState({
+          nextProducts : []
+        });
+      } else if (!this.state.isEndOfCatalogue) {
+        this.setState({showLoading: true});
+      }
     }
 
     if (!this.state.isFetchingNextProducts && this.state.nextProducts.length===0 && !this.state.isEndOfCatalogue) {
@@ -104,17 +109,14 @@ class App extends Component {
   }
 
   getRandomAdsIds(newLength) {
-    let ret = this.state.adsIds;
-    for(let i=this.state.adsIds.length; i<newLength; i++) {
-      ret.push(this.getRandomInt())
-    }
-    return ret;
-  }
-
-  getRandomInt() {
     const min = 1;
     const max = 1234567890123456;
-    return Math.floor(Math.random()*(max-min)) + min;
+    const randomInt = Math.floor(Math.random()*(max-min)) + min;
+    let ret = this.state.adsIds;
+    for(let i=this.state.adsIds.length; i<newLength; i++) {
+      ret.push(randomInt)
+    }
+    return ret;
   }
 
   render() {
