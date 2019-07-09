@@ -27,6 +27,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // fetch products for the first time
     this.fetchProducts();
     document.addEventListener('scroll', this.handleScroll);
   }
@@ -42,10 +43,12 @@ class App extends Component {
       page: 1,
       isEndOfCatalogue: false
     }, () => {
+      // fetch products when user change sort option
       this.fetchProducts()
     });
   }
 
+  // get products url with query params
   getProductsUrl() {
     let limitParam = `_limit=${this.state.limit}`;
     let pageParam = `&_page=${this.state.page}`;
@@ -53,6 +56,7 @@ class App extends Component {
     return 'http://localhost:3000/products?' + limitParam + pageParam + sortParam;
   }
 
+  // function to fetch products for the first time or when sort option is changed
   fetchProducts() {
     this.setState({showLoading: true});
     fetch(this.getProductsUrl())
@@ -75,6 +79,7 @@ class App extends Component {
     fetch(this.getProductsUrl())
       .then(response => response.json())
       .then(products => {
+        // get random id for array of Ads id, and save it to state
         const adsIds = this.getRandomAdsIds(Math.floor([...this.state.products, ...products].length/20));
         this.setState({
           showLoading: false,
@@ -83,25 +88,34 @@ class App extends Component {
           nextProducts: products,
           page: products.length>0? this.state.page+1: this.state.page,
           isEndOfCatalogue: products.length>0? false: true
-        }, () => {window.scrollBy(0, -1)});
+        }, () => {
+          // scroll up window by 1px, to trigger handleScroll()
+          window.scrollBy(0, -1)
+        });
       });
   }
 
   async handleScroll() {
+    // isNearBottom = true; when user reach to 375px (about 1 product wrapper height) from bottom page
     const isNearBottom = window.innerHeight + window.scrollY >= (document.body.offsetHeight) - 375;
     if (isNearBottom) {
       if (this.state.nextProducts.length>0) {
+        // add more products when nextProducts is exist
         await this.setState({
           products: [...this.state.products, ...this.state.nextProducts],
         });
+        // reset nextProducts after we add them, to prevent add more nextProducts with same nextProducts
         await this.setState({
           nextProducts : []
         });
       } else if (!this.state.isEndOfCatalogue) {
+        // when user isNearBottom but app isFetchingNextProducts, app will show loader
+        // loader will be hidden when fetch products is done
         this.setState({showLoading: true});
       }
     }
 
+    // fetchNextProducts when isFetchingNextProducts=false, nextProducts=[], and isEndOfCatalogue=false;
     if (!this.state.isFetchingNextProducts && this.state.nextProducts.length===0 && !this.state.isEndOfCatalogue) {
       this.fetchNextProducts();
     }
@@ -121,7 +135,9 @@ class App extends Component {
   render() {
     return (
       <Fragment>
+        {/* show loader when showLoading=true */}
         {this.state.showLoading && <Loader></Loader>}
+
         <div className="container-fluid">
           <div className="container">
             <h1>Products Grid</h1>
@@ -154,6 +170,8 @@ class App extends Component {
                 {/* <h3>{index}</h3> */}
                 <Product id={product.id} face={product.face} size={product.size} price={product.price} date={product.date}></Product>
               </div>
+
+              {/* add ads when app render every 20 products */}
               {(index+1)%20 === 0 && 
                 <div className="col-xs-12 col-sm-4 col-md-4 col-lg-3 well-sm">
                   {/* for debugging only, to show index of Ads array  */}
